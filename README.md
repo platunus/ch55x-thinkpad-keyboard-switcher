@@ -20,7 +20,7 @@ make
 | --- | --- | --- |
 | 1 | P1.4/SCS  | SPI Slave Chip Selector |
 | 2 | P1.5/MOSI | SPI MOSI |
-| 3 | P1.6/MISO | SPI MOSI |
+| 3 | P1.6/MISO | SPI MISO |
 | 4 | P1.7/SCK  | SPI Serial Clock |
 | 5 | RST       | Hardware reset |
 | 6 | P3.6/UDP  | USB Data (+) |
