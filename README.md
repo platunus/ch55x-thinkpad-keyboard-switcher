@@ -2,6 +2,18 @@
 
 They can share a ThinkPad USB Keyboard with a track pointer to three PCs.
 
+## Chart
+```mermaid
+graph TD
+    h[ThinkPad Keyboard: USB device] -->|USB| g[CH554T: USB host/SPI master]
+    g -->|SPI| d[CH554E #0: USB device/SPI slave]
+    g -->|SPI| e[CH554E #1: USB device/SPI slave]
+    g -->|SPI| f[CH554E #2: USB device/SPI slave]
+    d -->|USB| a[PC #0: USB host]
+    e -->|USB| b[PC #1: USB host]
+    f -->|USB| c[PC #2: USB host]
+```
+## Build
 ```
 git submodule init ch554_sdc
 git submodule update ch554_sdc
@@ -13,8 +25,8 @@ cd ../host
 make
 ```
 
-# Pin Assign
-## 3X CH554E (behaves for a USB device of a PC)
+## Pin Assign
+### 3X CH554E (behaves for a USB device of a PC)
 
 | pin # | name | function | 
 | --- | --- | --- |
@@ -29,7 +41,7 @@ make
 | 9 | VCC(5V)   | |
 | 10 | V33      | |
 
-## CH554T(behaves for a USB host of a keyboard)
+### 1X CH554T(behaves for a USB host of a keyboard)
 
 | pin # | name | function |
 | --- | --- | --- |
