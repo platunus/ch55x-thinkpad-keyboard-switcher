@@ -17,10 +17,10 @@
 	'r', 0x00, 'a', 0x00, 'c', 0x00, 'k', 0x00, \
 	'P', 0x00, 'o', 0x00, 'i', 0x00, 'n', 0x00, \
 	't', 0x00
-#define SERIAL_NUMBER '0'
+#define SERIAL_NUMBER '2'
 #define SERIAL_NUMBER_DESCRIPTION	\
-	'2', 0x00, '0', 0x00, '2', 0x00, '2', 0x00, \
-	'0', 0x00, '4', 0x00, '1', 0x00, '1', 0x00, \
+	'2', 0x00, '0', 0x00, '2', 0x00, '6', 0x00, \
+	'1', 0x00, '0', 0x00, '2', 0x00, '5', 0x00, \
 	'-', 0x00, SERIAL_NUMBER, 0x00
 
 #define MOUSE_LEFT_BUTTON	1
@@ -55,3 +55,4 @@ uint8_t ch55x_keyboard_get_leds_state();
 
 void ch55x_usbdevice_interrupt_handler(void) __interrupt (INT_NO_USB);
 
+uint8_t ch55x_device_get_config();

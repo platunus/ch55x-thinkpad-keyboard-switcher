@@ -12,11 +12,11 @@ __xdata __at (FIXED_ADDRESS_EP0_BUFFER) uint8_t Ep0Buffer[DEFAULT_ENDP0_SIZE];	/
 __xdata __at (FIXED_ADDRESS_EP1_BUFFER) uint8_t Ep1Buffer[MAX_PACKET_SIZE];		//Endpoint1 IN
 __xdata __at (FIXED_ADDRESS_EP2_BUFFER) uint8_t Ep2Buffer[MAX_PACKET_SIZE];		//Endpoint2 IN
 
-uint8_t SetupReq, SetupLen, UsbConfig;
+uint8_t SetupReq, SetupLen;
 USB_SETUP_REQ SetupReqBuf;
 __code uint8_t *pDescr;
 
-volatile __idata uint8_t RepDescSent;
+volatile __idata uint8_t UsbConfig;
 volatile __idata uint8_t HIDKeyboardDataSent;
 volatile __idata uint8_t HIDMouseDataSent;
 
@@ -332,11 +332,13 @@ void ch55x_usbdevice_interrupt_handler(void) __interrupt (INT_NO_USB)
 			len = USB_RX_LEN;
 			if(len == (sizeof(USB_SETUP_REQ)))
 			{
+/*
 TxOnlyUart0Write_('S');
 TxOnlyUart0WriteHex_(len);
 for (i = 0; i < len; i++) TxOnlyUart0WriteHex_(Ep0Buffer[i]);
 TxOnlyUart0Write_(0x0d);
 TxOnlyUart0Write_(0x0a);
+*/
 				SetupLen = UsbSetupBuf->wLengthL;
 //				if (UsbSetupBuf->wLengthH || SetupLen > 0x7f )
 				if (UsbSetupBuf->wLengthH || SetupLen > sizeof(MouseRepDesc) )
@@ -419,7 +421,6 @@ TxOnlyUart0Write_(0x0a);
 							{
 								pDescr = MouseRepDesc;
 								len = sizeof(MouseRepDesc);
-								RepDescSent = 1;
 							}
 							else
 							{
@@ -614,6 +615,7 @@ TxOnlyUart0Write_(0x0a);
 		UIF_SUSPEND = 0;
 		UIF_TRANSFER = 0;
 		UIF_BUS_RST = 0;
+		UsbConfig = 0;
 	}
 	if (UIF_SUSPEND)
 	{
@@ -681,9 +683,7 @@ void ch55x_device_init()
 	USB_INT_EN = bUIE_SUSPEND | bUIE_TRANSFER | bUIE_BUS_RST;
 	IE_USB = 1;
 
-	RepDescSent = 0;
 	EA = 1;
-	while(RepDescSent == 0) {};
 }
 
 void ch55x_mouse_move(int8_t delta_x, int8_t delta_y)
@@ -753,3 +753,7 @@ uint8_t ch55x_keyboard_get_leds_state()
 	return ledsState;
 }
 
+uint8_t ch55x_device_get_config()
+{
+	return UsbConfig;
+}

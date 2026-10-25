@@ -6,9 +6,6 @@
 #include "ch55x_usbdevice.h"
 
 #define JIGGLER_INTERVAL 50000		// ms
-#define JIGGLER_MOVING_DISTANCE 10	// pixels
-#define LED_ON_PERIOD 100			// ms
-
 #define TIMER0_INTERVAL 1000	// us -> 1ms interval
 
 // Indicator LED: P1.2
@@ -125,42 +122,44 @@ main()
 	uint8_t len = 0;
 	uint8_t scs_pre;
 	uint8_t index;
+	uint8_t usbconfig;
 
 	CfgFsys();
 
 	mDelaymS(5);
 
 	ch55x_device_init();
-	Timer0Init();
-
-	LEDInit();
+//	ch55x_keyboard_release(0);
 
 	SPI0SlaveInit();
+	Timer0Init();
 	
+	LEDInit();
 	TxOnlyUart0Init();
-
-	ch55x_keyboard_release(0);
 
 	scs_pre = 1;
 
 	while(1)
 	{
+		usbconfig = ch55x_device_get_config();
 		if (SCS == 1 && scs_pre == 0)
 		{
-			len = offset;
-			index = idx;
-			idx = idx ? 0 : 1;
-			if (len == buf[index][0] && len > 3) {
-				LED = 1;
-				if (buf[index][1] == 1)
-				{
-					ch55x_keyboard_send(buf[index] + 2, len - 2);
+			if (usbconfig) {
+				len = offset;
+				index = idx;
+				idx = idx ? 0 : 1;
+				if (len == buf[index][0] && len > 3) {
+					LED = 1;
+					if (buf[index][1] == 1)
+					{
+						ch55x_keyboard_send(buf[index] + 2, len - 2);
+					}
+					else if (buf[index][1] == 2)
+					{
+						ch55x_mouse_send(buf[index] + 2, len - 2);
+					}
+					LED = 0;
 				}
-				else if (buf[index][1] == 2)
-				{
-					ch55x_mouse_send(buf[index] + 2, len - 2);
-				}
-				LED = 0;
 			}
 			scs_pre = 1;
 			mills = 0;
@@ -179,17 +178,21 @@ main()
 		}
 		else if ( SCS == 1 && mills > JIGGLER_INTERVAL)
 		{
-			LED = 1;
-			ch55x_keyboard_press(0, 0x47);	// Enable Scroll Lock
-			ch55x_keyboard_release(0);
-			ch55x_keyboard_press(0, 0x47);	// Disable Scroll Lock
-			ch55x_keyboard_release(0);
-			LED = 0;
+			if (usbconfig) {
+				LED = 1;
+				ch55x_keyboard_press(0, 0x47);	// Enable Scroll Lock
+				ch55x_keyboard_release(0);
+				ch55x_keyboard_press(0, 0x47);	// Disable Scroll Lock
+				ch55x_keyboard_release(0);
+				LED = 0;
+			}
 			mills = 0;
 		}
 		else if (SCS == 0 && scs_pre == 1)
 		{
-			SPI0_S_PRE = ch55x_keyboard_get_leds_state();
+			if (usbconfig) {
+				SPI0_S_PRE = ch55x_keyboard_get_leds_state();
+			}
 			scs_pre = 0;
 		}
 	}
