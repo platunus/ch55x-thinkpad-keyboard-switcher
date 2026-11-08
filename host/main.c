@@ -119,15 +119,15 @@ void setPilotLeds(uint8_t select) {
 }
 
 void main() {
-    uint8_t   i, s,k, len, endp;
+    uint8_t   i, s, k, len, endp, select;
     uint16_t  loc;
 	__xdata uint8_t setReportBuf[3];
-	uint8_t leds, leds_pre[3], select;
-	uint8_t sw_pre = 1;
-	uint8_t act[3];
+	__xdata uint8_t leds, leds_pre[3];
+	__xdata uint8_t sw_pre = 1;
+	__xdata uint8_t act[3];
 
-	uint8_t modifier_pre = 0;
-	int8_t shift2 = 0;
+	__xdata uint8_t modifier_pre = 0;
+	__xdata int8_t shift2 = 0;
 
 	CfgFsys();	
 	mDelaymS(50);
@@ -136,6 +136,7 @@ void main() {
     printf("Start @ChipID=%02X\n", (uint16_t)CHIP_ID );
 	ch55x_spimaster_init();
 	Timer0Init();
+	PinInit();
     InitUSB_Host( );
     FoundNewDev = 0;
 	select = 0;

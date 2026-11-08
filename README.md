@@ -15,8 +15,8 @@ graph TD
 ```
 ## Build
 ```
-git submodule init ch554_sdc
-git submodule update ch554_sdc
+git submodule init ch554_sdcc
+git submodule update ch554_sdcc
 
 cd device  
 make
